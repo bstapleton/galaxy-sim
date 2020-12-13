@@ -1,11 +1,12 @@
 const sectorNames = require("./sectorNames");
 const neo4j = require('neo4j-driver')
 const auth = require('./auth')
+const { v4: uuidv4 } = require('uuid');
 
 const driver = neo4j.driver(auth.host, neo4j.auth.basic(auth.user, auth.password))
 const session = driver.session()
 
-const numberOfSectors = 256
+const numberOfSectors = 12
 const maximumSystemsPerSector = 16
 
 /**
@@ -43,9 +44,9 @@ module.exports = {
                     systemArray.push(`${sector.slice(0, 3).toUpperCase()}-${i}`)
                 }
 
-                creationQuery += ` CREATE (${sector}:Sector {name: "${sector}", x_pos: ${sectorX}, y_pos: ${sectorY}}) `;
+                creationQuery += ` CREATE (${sector}:Sector {id: "${uuidv4()}", name: "${sector}", x_pos: ${sectorX}, y_pos: ${sectorY}}) `;
                 systemArray.forEach((system) => {
-                    creationQuery += ` CREATE (${system.replace('-', '')}:System {name: "${system}"})-[:RESIDES_IN]->(${sector})`
+                    creationQuery += ` CREATE (${system.replace('-', '')}:System {id: "${uuidv4()}", name: "${system}"})-[:RESIDES_IN]->(${sector})`
                 })
 
                 sectorX++
