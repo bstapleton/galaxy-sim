@@ -8,6 +8,7 @@ const session = driver.session()
 
 const numberOfSectors = 12
 const maximumSystemsPerSector = 16
+const maximumInterSystemLinks = 4;
 
 /**
  * Pluck n random elements from an array and return whatever is left
@@ -68,5 +69,37 @@ module.exports = {
 
         // on application exit:
         await driver.close()
+    },
+
+    internalSystemLinks: async() => {
+        try {
+            // TODO: globalise the sector array so it can be thrown around between various functions
+            let selectQuery = `MATCH (:Sector {name: "Ugni"})-[r]-() RETURN r`
+            const createSystem = await session.run(
+                selectQuery
+                // TODO: select all systems in a sector, assign to an array to iterate over below
+            ).then((res) => {
+                console.log(res.records)
+                // const linkArray = systemArray.slice(0)
+                //
+                // // Maximum internal links from a system is predefined unless the total systems is less, then use
+                // // that (-1 for the current one because it can't link to itself).
+                // for (let l = index; l < Math.floor(Math.random() * (maximumInterSystemLinks < linkArray.length ? maximumInterSystemLinks : (linkArray.length - 1))); l++) {
+                //     // Splice out the current system because it can't link to itself.
+                //     linkArray.splice(index, 1)
+                //
+                //     // Assign the link from the array.
+                //     const link = linkArray[Math.floor(Math.random() * linkArray.length)]
+                //
+                //     console.log(` CREATE ("${system}")-[:CONNECTED_TO]->("${link}")`)
+                // }
+                // // creationQuery += ` CREATE ("${system}")-[:CONNECTED_TO]->()`
+            })
+        } catch(e) {
+            console.error(e)
+        } finally {
+            console.log('closing')
+            await session.close()
+        }
     }
 }
