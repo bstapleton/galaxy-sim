@@ -13,9 +13,9 @@ const maximumInterSystemLinks = 4;
 // TODO: method to generate the sector array
 // TODO: method to create the sectors
 // TODO: method to generate the systems array for each sector
-// TODO: method to create the systems in a sector
+// TODO: method to create the systems in a sector in the DB
 // TODO: method to generate the links array for systems in a sector
-// TODO: method to create the links between the systems in a sector
+// TODO: method to attach the link relations between the systems in a sector in the DB
 
 /**
  * Pluck n random elements from an array and return whatever is left
