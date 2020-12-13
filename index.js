@@ -10,6 +10,13 @@ const numberOfSectors = 12
 const maximumSystemsPerSector = 16
 const maximumInterSystemLinks = 4;
 
+// TODO: method to generate the sector array
+// TODO: method to create the sectors
+// TODO: method to generate the systems array for each sector
+// TODO: method to create the systems in a sector
+// TODO: method to generate the links array for systems in a sector
+// TODO: method to create the links between the systems in a sector
+
 /**
  * Pluck n random elements from an array and return whatever is left
  *
