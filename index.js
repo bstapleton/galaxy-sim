@@ -1,45 +1,68 @@
 const sectorNames = require("./sectorNames");
 const neo4j = require('neo4j-driver')
 const auth = require('./auth')
+const pluckRandom = require('./utils/pluckRandom')
+const greekAlphabet = require('./data/greekAlphabet')
 const { v4: uuidv4 } = require('uuid');
 
 const driver = neo4j.driver(auth.host, neo4j.auth.basic(auth.user, auth.password))
 const session = driver.session()
 
-const numberOfSectors = 12
-const maximumSystemsPerSector = 16
+const numberOfSectors = 12;
+const minimumSystemsPerSector = 4;
+const maximumSystemsPerSector = 16;
 const maximumInterSystemLinks = 4;
 
-// TODO: method to generate the sector array
 // TODO: method to create the sectors
 // TODO: method to generate the systems array for each sector
 // TODO: method to create the systems in a sector in the DB
 // TODO: method to generate the links array for systems in a sector
 // TODO: method to attach the link relations between the systems in a sector in the DB
 
-/**
- * Pluck n random elements from an array and return whatever is left
- *
- * @param arr
- * @param num
- * @returns {[]}
- */
-const pluckRandom = (arr, num = 1) => {
-    const res = [];
-    for(let i = 0; i < num; ){
-        const random = Math.floor(Math.random() * arr.length);
-        if(res.indexOf(arr[random]) !== -1){
-            continue;
-        }
-        res.push(arr[random]);
-        i++
-    }
-    return res;
+const generateSectors = () => {
+    return pluckRandom(sectorNames, numberOfSectors);
 }
+
+/**
+ * Determine star class based on some simple probability.
+ *
+ * @returns {string}
+ */
+const getStarClass = () => {
+    let systemProbability = Math.floor(Math.random() * 10000000)
+
+    if (systemProbability < 3) {
+        return 'O'
+    } else if (systemProbability < 13000) {
+        return 'B'
+    } else if (systemProbability < 60000) {
+        return 'A'
+    } else if (systemProbability < 300000) {
+        return 'F'
+    } else if (systemProbability < 760000) {
+        return 'G'
+    } else if (systemProbability < 1210000) {
+        return 'K'
+    }
+
+    return 'M'
+}
+
+/**
+ * Randomise the heat scale for a star from 0-9.9, keeping whole numbers.
+ *
+ * @returns {number}
+ */
+const getStarHeatScale = () => {
+    return parseFloat((Math.random() * 9.9).toFixed(1))
+}
+
+// TODO: planets. minimum 1, maximum 16. keep this one random
+// TODO: planet types
 
 module.exports = {
     init: async () => {
-        const sectors = pluckRandom(sectorNames, numberOfSectors);
+        const sectors = generateSectors();
         let creationQuery = '';
         let sectorX = 1;
         let sectorY = 1;
@@ -48,8 +71,8 @@ module.exports = {
                 // TODO: tidy up the generators, split into methods to make it cleaner
                 let systemArray = []
 
-                for (let i = 0; i < Math.floor(Math.random() * maximumSystemsPerSector); i++) {
-                    systemArray.push(`${sector.slice(0, 3).toUpperCase()}-${i}`)
+                for (let i = 0; i < Math.floor(Math.random() * (maximumSystemsPerSector - minimumSystemsPerSector) + minimumSystemsPerSector); i++) {
+                    systemArray.push(`${greekAlphabet[i]} ${sector}`)
                 }
 
                 creationQuery += ` CREATE (${sector}:Sector {id: "${uuidv4()}", name: "${sector}", x_pos: ${sectorX}, y_pos: ${sectorY}}) `;
