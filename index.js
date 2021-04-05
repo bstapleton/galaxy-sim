@@ -1,8 +1,8 @@
-const sectorNames = require("./sectorNames");
+const sectorNames = require("./data/sectorNames");
+const greekAlphabet = require('./data/greekAlphabet')
 const neo4j = require('neo4j-driver')
 const auth = require('./auth')
 const pluckRandom = require('./utils/pluckRandom')
-const greekAlphabet = require('./data/greekAlphabet')
 const { v4: uuidv4 } = require('uuid');
 
 const driver = neo4j.driver(auth.host, neo4j.auth.basic(auth.user, auth.password))
